@@ -55,6 +55,18 @@ Variables is just like the variables that we use in programming languages, helps
 ```
 # Often a seperate file creation is suggested.
 
+variable "variable_name" {
+  type        = <type>           # optional but recommended
+  default     = <value>          # optional
+  description = "text"           # optional
+  sensitive   = true/false       # optional
+  validation {                   # optional
+    condition     = <expression>
+    error_message = "text"
+  }
+  nullable    = true/false       # optional
+}
+
 variable "instance_type" {
   type = string
   defaut = "t2.micro"  
@@ -76,3 +88,42 @@ NOTE: We can use the **terraform console** to see the variable values (to determ
 
 <b>Bonus Tip:</b>
 You can use this website to get the ubuntu ami-id according to the region, architecture and instance type.
+
+
+## Resources
+Resources are the place where we create our actual infrastructure's entity which we'll later link to other different sources to form a system. 
+```
+resource "aws_resource" "web" {
+  ami_id = "ami-0c7114fa3eac14de1"
+  instance_type = var.instance_type
+}
+```
+
+## Output
+The place where we can literally collect the outcome attributes of the system entities that we have created to use it for various purposes. For instance,
+```
+Format:
+output "output_name" {
+  value       = <expression>      # REQUIRED
+  description = "optional text"   # optional
+  sensitive   = true              # optional
+  depends_on  = []                # optional
+}
+
+output "public_ip_address" {
+  value = aws_resource.web.public_ip
+}
+```
+
+# Modularization
+Modules are chunks/packages of work interconnected to each to violate the monolith architecture and mimic the microservice architecture. In large scale applications, where readability is a top priority, we will be required to modify the main.tf attibutes to standard files of same type. By doing this, interpretation of the code becomes easier, making hotfixes/patches quicker. File tracing should also be having a standard location with proper naming convention, that's also a priority.
+
+So these modules goes into <i>main.tf</i>, where it would point to the location of the modules also the inputs to be passed inorder to create the desired system structure.
+```
+module "ec2_instance" {
+  source = "./modules/ec2_instance"
+  ami_id = "ami-0c7114fa3eac14de1"
+  instance_type = t2.micro
+}
+```
+This enables the reusability of an existing infrastructure without a need to go for a fresh piece of script to be written.
