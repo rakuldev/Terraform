@@ -144,4 +144,4 @@ Let's consider another situation where a Devops Engineer wants to push a change 
 Configuring the statefile to a remote backend, somewhere like a S3 bucket, so that we don't need to carry them in VCS anymore, solving the overhead of statefile updates.
 
 How will terraform understand that I'm using a remote backend?
-- Terraform is smart enough to figure it out by itself.
+- Terraform is smart enough to figure it out by itself when we use the <i>backend</i> block, carries the backend data giving enough context to let know the same to terraform. 
