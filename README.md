@@ -127,3 +127,21 @@ module "ec2_instance" {
 }
 ```
 This enables the reusability of an existing infrastructure without a need to go for a fresh piece of script to be written.
+
+
+# Terraform State File
+One of the core component of terraform is the terraform statefile. This statefile carries the state of the infrastructure being created, so that if in case there are changes happening, the changes would be happening to an existing infra if that's the intention or creates newer one only if needed. This nature of idempotency is achieved in here.
+
+Let's consider this arhictecture where we lack statefile in our IaC, this is what will happen:
+<img width="1351" height="662" alt="Screenshot 2025-11-23 203632" src="https://github.com/user-attachments/assets/f957f860-d194-49ac-a4e6-5b5159decf81" />\
+But, if we equip the statefile to terraform, then there won't be any sort of duplication being occurred un-necessarily.
+
+### Limitations of Statefile
+Okay, now we'll bring in a situation where we don't want to store some information in statefile since those are confidential, because the entire team/organization will be shared in git repository, carrying sensitive infromation like secret keys, tokens and stuff from policies of an AWS service. The statefile info is comprimised in here. What will be the solution to handle this?
+
+Let's consider another situation where a Devops Engineer wants to push a change on the infrastructure via IaC, but the overhead we have is, the statefile will be updated after the infrastructure change, which means, the modified statefile should be in the machine which runs the terraform apply. So, once again the statefile from that particular machine should be merged to main else the older statefile will be used by the team members, bringing back the system to its previous state.
+- Both can be solved by <b>Remote Backend</b> by restricting access to admin.
+Configuring the statefile to a remote backend, somewhere like a S3 bucket, so that we don't need to carry them in VCS anymore, solving the overhead of statefile updates.
+
+How will terraform understand that I'm using a remote backend?
+- Terraform is smart enough to figure it out by itself.
